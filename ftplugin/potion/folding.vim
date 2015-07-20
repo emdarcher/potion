@@ -37,6 +37,8 @@ function! GetPotionFold(lnum)
     elseif next_indent < this_indent
         return this_indent
     elseif next_indent > this_indent
+        " the '>' makes it open the line number after it,
+        " so '>1' makes it open/close line 1
         return '>' . next_indent
     endif
 endfunction
