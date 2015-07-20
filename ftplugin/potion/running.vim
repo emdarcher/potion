@@ -8,6 +8,8 @@ if !exists("g:potion_command")
 endif
 
 function! PotionCompileAndRunFile()
+    " save file before compilation
+    execute "w"
     silent !clear
     execute "!" . g:potion_command . " " . bufname("%")
 endfunction
@@ -15,17 +17,24 @@ endfunction
 nnoremap <buffer> <LocalLeader>r :call PotionCompileAndRunFile()<cr>
 
 function! PotionShowBytecode()
+    " save file
+    execute "w"
     " Get the bytecode.
     let bytecode = system(g:potion_command . " -c -V " . bufname("%"))
+   
+    " check if there was a shell error 
+    if v:shell_error
+        echoerr bytecode
+    else
+        " Open a new split and set it up
+        vsplit __Potion_Bytecode__
+        normal! ggdG
+        setlocal filetype=potionbytecode
+        setlocal buftype=nofile
 
-    " Open a new split and set it up
-    vsplit __Potion_Bytecode__
-    normal! ggdG
-    setlocal filetype=potionbytecode
-    setlocal buftype=nofile
-
-    " Insert the bytecode.
-    call append(0, split(bytecode, '\v\n'))
+        " Insert the bytecode.
+        call append(0, split(bytecode, '\v\n'))
+    endif
 
 endfunction
 
