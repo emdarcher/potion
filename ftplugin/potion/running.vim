@@ -26,14 +26,21 @@ function! PotionShowBytecode()
     if v:shell_error
         echoerr bytecode
     else
-        " Open a new split and set it up
-        vsplit __Potion_Bytecode__
-        normal! ggdG
-        setlocal filetype=potionbytecode
-        setlocal buftype=nofile
+        " Check to see if bytecode buffer already exists
+        if bufwinnr("__Potion_Bytecode__") >= 0 
+            " if it already exists, switch to that window
+            execute  bufwinnr("__Potion_Bytecode__")  . "wincmd w"
+        else
 
-        " Insert the bytecode.
-        call append(0, split(bytecode, '\v\n'))
+            " Open a new split and set it up
+            vsplit __Potion_Bytecode__
+            normal! ggdG
+            setlocal filetype=potionbytecode
+            setlocal buftype=nofile
+
+            " Insert the bytecode.
+            call append(0, split(bytecode, '\v\n'))
+        endif
     endif
 
 endfunction
